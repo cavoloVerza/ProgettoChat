@@ -48,7 +48,7 @@ public class ThreadServer extends Thread{
 
                 if(sendTo.startsWith("/all ")) {
 
-                    String message = sendTo.replace("/all ", clientNickName);
+                    String message = sendTo.replace("/all ", clientNickName + ": ");
                     boolean flag = server.broadCastMessage(this, message);
 
                     if(!flag) {
@@ -58,15 +58,15 @@ public class ThreadServer extends Thread{
 
                 } else if(sendTo.startsWith("/one ")) {
 
-                    String arguments = sendTo.replace("/one ", clientNickName);
+                    String arguments = sendTo.replace("/one ", clientNickName + ": ");
                     String[] array = arguments.split(" ");
 
-                    String nick = array[0];
-                    String message = "";
+                    String nick = array[1];
+                    String message = clientNickName + ": ";
 
-                    for(int i = 1; i < array.length; i++) {
+                    for(int i = 2; i < array.length; i++) {
 
-                        message = message + array[i];
+                        message = message + array[i] + " ";
                     }
 
                     boolean flag = server.privateMessage(nick, message);
