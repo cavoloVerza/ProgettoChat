@@ -1,10 +1,6 @@
 package com.example;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Client {
     public static void main( String[] args ) {
@@ -12,13 +8,17 @@ public class Client {
 
         try { 
             
-            Socket s = new Socket("localhost", 3000);
+            Socket socket = new Socket("localhost", 3000);
+            System.out.println( "Client in avvio!" ); System.out.println("");
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            DataOutputStream out = new DataOutputStream(s.getOutputStream());
-            Scanner input = new Scanner(System.in);
+            ThreadLettura thread1 = new ThreadLettura(socket);
+            ThreadScrittura thread2 = new ThreadScrittura(socket);
+
+            thread1.start();
+            thread2.start();
 
         } catch (Exception e) {
+            
             System.out.println(e.getMessage());
             System.out.println("errore durante l'istanza del server");
             System.exit(1);

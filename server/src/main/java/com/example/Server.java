@@ -1,31 +1,28 @@
 package com.example;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
 public class Server {
 
-    public ArrayList <ThreadServer> listaThread = new ArrayList();
+    public static ArrayList <ThreadServer> listaThread = new ArrayList();
 
-    public void main( String[] args ) {
+    public static void main( String[] args ) {
         //Server
+
         try {
 
             ServerSocket serverSocket = new ServerSocket(3000);
-            System.out.println( "Server in avvio!" );
-            System.out.println("");
+            System.out.println( "Server in avvio!" ); System.out.println("");
             
             do {
 
                 Socket socket = serverSocket.accept();
                 System.out.println( "Client connesso: " + socket);
 
-                ThreadServer thread = new ThreadServer(socket, this);
+                ThreadServer thread = new ThreadServer(socket, null);
                 listaThread.add(thread);
                 thread.start();
 

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ThreadServer extends Thread{
 
@@ -28,21 +27,20 @@ public class ThreadServer extends Thread{
 
     public void run() {
 
-
         try {
 
+            clientNickName = inClient.readLine();
+            System.out.println("Connessione: " + clientNickName);  System.out.println("");
+
+            if(server.isNickUsed(clientNickName)){
+
+                outClient.writeBytes("!" + '\n');
+                server.removeClient(this);
+                socket.close();
+                return;
+            }
+
             do{
-
-                clientNickName = inClient.readLine();
-                System.out.println("Connessione: " + clientNickName);  System.out.println("");
-
-                if(server.isNickUsed(clientNickName)){
-
-                    outClient.writeBytes("!" + '\n');
-                    server.removeClient(this);
-                    socket.close();
-                    return;
-                }
 
                 sendTo = inClient.readLine();
 
@@ -86,6 +84,7 @@ public class ThreadServer extends Thread{
 
                 } else if(sendTo.equals("/close")) {
 
+                    outClient.writeBytes("Q" + '\n');
                     server.removeClient(this);
                     socket.close();
                     return;
@@ -109,6 +108,4 @@ public class ThreadServer extends Thread{
         outClient.writeBytes(message + '\n');
     }
 
-
-    
 }
