@@ -1,7 +1,6 @@
 package com.example;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -16,7 +15,7 @@ public class ThreadLettura extends Thread{
     public ThreadLettura(Socket socket) throws IOException{
 
         this.socket = socket;
-        new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        inServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
     public void run() {

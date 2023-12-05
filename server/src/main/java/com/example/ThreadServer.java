@@ -17,10 +17,12 @@ public class ThreadServer extends Thread{
     String clientNickName = ""; 
     String sendTo;
 
-    public ThreadServer(Socket socket, Server server) throws IOException{
+    public ArrayList <ThreadServer> listaThread = new ArrayList();
+
+    public ThreadServer(Socket socket, ArrayList listaThread) throws IOException{
 
         this.socket = socket;
-        this.server = server;
+        this.listaThread = listaThread;
         inClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         outClient = new DataOutputStream(socket.getOutputStream());
     }
@@ -32,10 +34,10 @@ public class ThreadServer extends Thread{
             clientNickName = inClient.readLine();
             System.out.println("Connessione: " + clientNickName);  System.out.println("");
 
-            if(server.isNickUsed(clientNickName)){
+            if(isNickUsed(clientNickName)){
 
                 outClient.writeBytes("!" + '\n');
-                server.removeClient(this);
+                removeClient(this);
                 socket.close();
                 return;
             }
@@ -47,7 +49,7 @@ public class ThreadServer extends Thread{
                 if(sendTo.startsWith("/all ")) {
 
                     String message = sendTo.replace("/all ", clientNickName + ": ");
-                    boolean flag = server.broadCastMessage(this, message);
+                    boolean flag = broadCastMessage(this, message);
 
                     if(!flag) {
 
@@ -67,7 +69,7 @@ public class ThreadServer extends Thread{
                         message = message + array[i] + " ";
                     }
 
-                    boolean flag = server.privateMessage(nick, message);
+                    boolean flag = privateMessage(nick, message);
 
                     if(!flag) {
 
@@ -76,8 +78,7 @@ public class ThreadServer extends Thread{
                     
                 } else if(sendTo.equals("/list")){
 
-                    ArrayList lista = server.listMemebers();
-
+                    ArrayList lista = listMemebers();
 
                     outClient.writeBytes(String.join("; ", lista) + '\n');
 
@@ -85,7 +86,8 @@ public class ThreadServer extends Thread{
                 } else if(sendTo.equals("/close")) {
 
                     outClient.writeBytes("Q" + '\n');
-                    server.removeClient(this);
+                    System.out.println( "Un client si è disconnesso" );
+                    removeClient(this);
                     socket.close();
                     return;
                 }
@@ -106,6 +108,72 @@ public class ThreadServer extends Thread{
     public void inviaMessaggio(String message) throws IOException {
 
         outClient.writeBytes(message + '\n');
+    }
+
+    public boolean isNickUsed(String nick) {
+
+        if(listaThread.size() == 1){
+
+            return false;
+
+        }else {
+
+            for(int i = 0; i < listaThread.size() - 1; i++) {
+            if(listaThread.get(i).clientNickName.equals(nick))
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    public void removeClient(ThreadServer thread){
+
+        this.listaThread.remove(thread);
+    }
+
+    public boolean broadCastMessage(ThreadServer thread, String message) throws IOException {
+
+        if(listaThread.size() == 1)
+            return false;
+
+        for (ThreadServer t : listaThread) {
+            if (t.getNick() != thread.getNick())
+                t.inviaMessaggio(message + "\n");
+        }
+
+        return true;
+
+    }
+
+    public boolean privateMessage(String nick, String message) throws IOException {
+
+        for (ThreadServer t : listaThread) {
+            if (t.clientNickName.equals(nick)) {
+
+                t.inviaMessaggio(message + "\n");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public ArrayList<String> listMemebers() {
+
+        ArrayList <String> lista = new ArrayList();
+        for(ThreadServer t : listaThread) {
+
+            lista.add(t.clientNickName);
+        }
+        
+        return lista;
+
+    }
+
+    public String getNick() {
+
+        return this.clientNickName;
     }
 
 }

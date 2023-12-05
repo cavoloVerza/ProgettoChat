@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 public class Server {
 
-    public static ArrayList <ThreadServer> listaThread = new ArrayList();
-
     public static void main( String[] args ) {
         //Server
+
+        ArrayList <ThreadServer> listaThread = new ArrayList();
 
         try {
 
@@ -22,7 +22,7 @@ public class Server {
                 Socket socket = serverSocket.accept();
                 System.out.println( "Client connesso: " + socket);
 
-                ThreadServer thread = new ThreadServer(socket, null);
+                ThreadServer thread = new ThreadServer(socket, listaThread);
                 listaThread.add(thread);
                 thread.start();
 
@@ -35,65 +35,6 @@ public class Server {
             System.out.println(e.getMessage());
             System.out.println( "Errore durante l'istanza del Server!" );
         }
-
-    }
-
-
-
-
-    public boolean isNickUsed(String nick) {
-
-        for(int i = 0; i < listaThread.size(); i++) {
-            if(listaThread.get(i).clientNickName.equals(nick))
-                return true;
-
-        }
-
-        return false;
-
-    }
-
-    public void removeClient(ThreadServer thread){
-
-        this.listaThread.remove(thread);
-    }
-
-    public boolean broadCastMessage(ThreadServer thread, String message) throws IOException {
-
-        if(listaThread.size() == 1)
-            return false;
-
-        for (ThreadServer t : listaThread) {
-            if (thread != t)
-                thread.inviaMessaggio(message + "\n");
-        }
-
-        return true;
-
-    }
-
-    public boolean privateMessage(String nick, String message) throws IOException {
-
-        for (ThreadServer t : listaThread) {
-            if (t.clientNickName.equals(nick)) {
-
-                t.inviaMessaggio(message + "\n");
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public ArrayList<String> listMemebers() {
-
-        ArrayList <String> lista = new ArrayList();
-        for(ThreadServer t : listaThread) {
-
-            lista.add(t.clientNickName);
-        }
-        
-        return lista;
 
     }
 
