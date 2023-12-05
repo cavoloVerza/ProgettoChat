@@ -37,6 +37,7 @@ public class ThreadServer extends Thread{
             if(isNickUsed(clientNickName)){
 
                 outClient.writeBytes("!" + '\n');
+                System.out.println( "Un client si è disconnesso" );
                 removeClient(this);
                 socket.close();
                 return;
