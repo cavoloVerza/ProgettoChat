@@ -14,7 +14,8 @@ public class ThreadServer extends Thread{
     DataOutputStream outClient;
 
     Server server;
-    String clientNickName = ""; 
+    String clientNickName = "";
+    int clientNumber;
     String sendTo;
 
     public ArrayList <ThreadServer> listaThread = new ArrayList();
@@ -23,6 +24,8 @@ public class ThreadServer extends Thread{
 
         this.socket = socket;
         this.listaThread = listaThread;
+
+        clientNumber = listaThread.size();
         inClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         outClient = new DataOutputStream(socket.getOutputStream());
     }
@@ -119,10 +122,18 @@ public class ThreadServer extends Thread{
 
         }else {
 
-            for(int i = 0; i < listaThread.size() - 1; i++) {
-            if(listaThread.get(i).clientNickName.equals(nick))
-                return true;
+            for(int i = 0; i < listaThread.size(); i++) {
+
+                if(i != listaThread.get(i).getClientNumber()) {
+
+                    if(listaThread.get(i).clientNickName.equals(nick)){
+                        return true;
+                    }
+
+                }
+
             }
+            
         }
         return false;
 
@@ -175,6 +186,11 @@ public class ThreadServer extends Thread{
     public String getNick() {
 
         return this.clientNickName;
+    }
+
+    public int getClientNumber() {
+
+        return this.clientNumber;
     }
 
 }

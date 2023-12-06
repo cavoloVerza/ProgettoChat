@@ -28,7 +28,7 @@ public class ThreadLettura extends Thread{
 
                 if(carattere.equals("X")) {
 
-                    System.out.println( "ERRORE: solo 1 client connesso, attendi...");
+                    System.out.println( "ERRORE: client non connesso, attendi...");
 
                 }else if(carattere.equals("!")) {
 
